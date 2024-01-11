@@ -15,7 +15,7 @@ const ControlPanel = () => {
 
   return (
     <>
-      <div className="bg-[#F6F8FB] min-h-screen rounded-t-3xl p-8  justify-between">
+      <div className="bg-[#F6F8FB] min-h-screen rounded-t-3xl p-8 justify-between">
         <ul className="flex justify-between flex-wrap gap-6">
           {buttonsData.map((button, index) => (
             <ControlBtn

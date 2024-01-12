@@ -15,6 +15,18 @@ const ControlPanel = () => {
 
   return (
     <>
+      <div className="flex justify-between p-10 items-center">
+        <h1 className="text-white text-3xl font-bold">
+          Control <br /> Panel
+        </h1>
+        <span className="rounded-full border-2 solid border-gray-300 size-14">
+          <img
+            className="rounded-full"
+            src="https://xsgames.co/randomusers/avatar.php?g=female"
+            alt=""
+          />
+        </span>
+      </div>
       <div className="bg-[#F6F8FB] min-h-screen rounded-t-3xl p-8 justify-between">
         <ul className="flex justify-between flex-wrap gap-6">
           {buttonsData.map((button, index) => (

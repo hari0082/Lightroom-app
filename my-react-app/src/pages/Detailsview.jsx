@@ -1,21 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navigation from "../components/FooterNav";
 
 const DetailsSite = () => {
   const [intensity, setIntensity] = useState(50);
   const [powerOn, setPowerOn] = useState(false);
+  const [updatedState, setUpdatedState] = useState(null);
 
   const handleIntensityChange = (event) => {
     setIntensity(event.target.value);
   };
 
-  const handlePowerButtonClick = () => {
-    setPowerOn(!powerOn);
+  const toggleLight = () => {
+    const endpoint =
+      "http://192.168.8.100/api/TpTi4Vomw1kfnwys7trHAe58FnGkqi6UYbVsanYS/lights/48/state";
+
+    fetch(endpoint, {
+      method: "PUT",
+      body: JSON.stringify({ on: !powerOn }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Light state changed successfully:", data);
+        setPowerOn((prev) => !prev);
+        console.log("Updated state:", powerOn);
+        setUpdatedState(powerOn);
+      })
+      .catch((error) => {
+        console.error("Error changing light state:", error);
+      });
   };
+
+  useEffect(() => {
+    setUpdatedState(powerOn);
+  }, [powerOn]);
 
   return (
     <>
       <div className="flex justify-between p-8 items-center">
+        <span className="absolute top-8">
+          <img src="src/assets/backbtn.png" alt="" />
+        </span>
         <h1 className="text-white text-3xl font-bold">
           Chosen <br /> Room
           <p className="text-base text-[#FFD239] mt-2">4 light</p>
@@ -38,8 +70,8 @@ const DetailsSite = () => {
           Bed light
         </button>
       </span>
-      <div className="absolute right-7 top-[333px]">
-        <button onClick={handlePowerButtonClick}>
+      <div className="absolute end-10 top-[333px]">
+        <button onClick={toggleLight}>
           <img
             src={powerOn ? "src/assets/poweron.png" : "src/assets/poweroff.png"}
             alt=""

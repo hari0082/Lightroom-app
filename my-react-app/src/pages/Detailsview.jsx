@@ -16,7 +16,7 @@ const DetailsSite = () => {
     const endpoint =
       "http://192.168.8.100/api/TpTi4Vomw1kfnwys7trHAe58FnGkqi6UYbVsanYS/lights/48/state";
 
-    const color = powerOn ? [1, 1] : [0.3227, 0.329]; // Hvid farve, når det er slukket, ellers brug den sidste valgte farve
+    const color = powerOn ? [1, 1] : [0.3227, 0.329];
 
     fetch(endpoint, {
       method: "PUT",
@@ -74,8 +74,7 @@ const DetailsSite = () => {
   };
 
   const handleAddColor = () => {
-    // Implementer logik for at åbne dialog eller inputfelt for at tilføje farver
-    console.log("Implementer funktionen for at tilføje flere farver");
+    console.log("tilføj flere farver funktion her min ven");
   };
 
   const handleSceneClick = (scene) => {
@@ -84,10 +83,10 @@ const DetailsSite = () => {
         const pinkColor = [0.4361, 0.2225];
         const whiteColor = [0.3227, 0.329];
 
-        let currentColor = pinkColor; // Start med lyserød farve
+        let currentColor = pinkColor;
         setInterval(() => {
           changeColor(currentColor);
-          currentColor = currentColor === pinkColor ? whiteColor : pinkColor; // Skift mellem lyserød og hvid
+          currentColor = currentColor === pinkColor ? whiteColor : pinkColor;
         }, 500);
         break;
 
@@ -174,7 +173,9 @@ const DetailsSite = () => {
         <ul className="flex gap-3">
           <li>
             <button
-              className=" bg-red-400 p-2 rounded-full text-transparent w-8 h-8"
+              className={`bg-red-400 p-2 rounded-full text-transparent w-8 h-8 focus:outline-none focus:ring ${
+                updatedState ? "border-gray-500" : ""
+              }`}
               onClick={() => changeColor([0.675, 0.322])}
             >
               Red
@@ -182,7 +183,9 @@ const DetailsSite = () => {
           </li>
           <li>
             <button
-              className=" bg-green-400 p-2 rounded-full text-transparent w-8 h-8"
+              className={`bg-green-400 p-2 rounded-full text-transparent w-8 h-8 focus:outline-none focus:ring ${
+                updatedState ? "border-gray-500" : ""
+              }`}
               onClick={() => changeColor([0.41, 0.51721])}
             >
               Green
@@ -190,7 +193,9 @@ const DetailsSite = () => {
           </li>
           <li>
             <button
-              className=" bg-blue-400 p-2 rounded-full text-transparent w-8 h-8"
+              className={`bg-blue-400 p-2 rounded-full text-transparent w-8 h-8 focus:outline-none focus:ring ${
+                updatedState ? "border-gray-500" : ""
+              }`}
               onClick={() => changeColor([0.167, 0.04])}
             >
               Blue
@@ -198,7 +203,9 @@ const DetailsSite = () => {
           </li>
           <li>
             <button
-              className=" bg-yellow-400 p-2 rounded-full text-transparent w-8 h-8"
+              className={`bg-yellow-400 p-2 rounded-full text-transparent w-8 h-8 focus:outline-none focus:ring ${
+                updatedState ? "border-gray-500" : ""
+              }`}
               onClick={() => changeColor([0.443, 0.5099])}
             >
               Yellow
@@ -206,7 +213,9 @@ const DetailsSite = () => {
           </li>
           <li>
             <button
-              className=" bg-purple-400 p-2 rounded-full text-transparent w-8 h-8"
+              className={`bg-purple-400 p-2 rounded-full text-transparent w-8 h-8 focus:outline-none focus:ring ${
+                updatedState ? "border-gray-500" : ""
+              }`}
               onClick={() => changeColor([0.322, 0.168])}
             >
               Purple
@@ -214,7 +223,9 @@ const DetailsSite = () => {
           </li>
           <li>
             <button
-              className="bg-white p-2 rounded-full w-8 h-8 flex justify-center items-center text-center font-semibold"
+              className={`bg-white p-2 rounded-full w-8 h-8 flex justify-center items-center text-center font-semibold focus:outline-none focus:ring ${
+                updatedState ? "border-gray-500" : ""
+              }`}
               onClick={handleAddColor}
             >
               +
@@ -225,7 +236,7 @@ const DetailsSite = () => {
         <ul className="mt-4 flex justify-center flex-wrap gap-6">
           <li>
             <button
-              className="flex justify-evenly items-center bg-[#FF9B9B] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs"
+              className={`flex justify-evenly items-center bg-[#FF9B9B] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs focus:outline-none focus:ring`}
               onClick={() => handleSceneClick("Birthday")}
             >
               <img src="src/assets/whitesurface.png" alt="" />
@@ -234,7 +245,7 @@ const DetailsSite = () => {
           </li>
           <li>
             <button
-              className="flex justify-evenly items-center bg-[#A693EB] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs"
+              className={`flex justify-evenly items-center bg-[#A693EB] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs focus:outline-none focus:ring`}
               onClick={() => handleSceneClick("Party")}
             >
               <img src="src/assets/whitesurface.png" alt="" />
@@ -243,7 +254,7 @@ const DetailsSite = () => {
           </li>
           <li>
             <button
-              className="flex justify-evenly items-center bg-[#93CAEB] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs"
+              className={`flex justify-evenly items-center bg-[#93CAEB] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs focus:outline-none focus:ring`}
               onClick={() => handleSceneClick("Relax")}
             >
               <img src="src/assets/whitesurface.png" alt="" />
@@ -252,7 +263,7 @@ const DetailsSite = () => {
           </li>
           <li>
             <button
-              className="flex justify-evenly items-center bg-[#89DD94] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs"
+              className={`flex justify-evenly items-center bg-[#89DD94] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs focus:outline-none focus:ring`}
               onClick={() => handleSceneClick("Fun")}
             >
               <img src="src/assets/whitesurface.png" alt="" />

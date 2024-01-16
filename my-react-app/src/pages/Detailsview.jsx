@@ -3,20 +3,27 @@ import Navigation from "../components/FooterNav";
 
 const DetailsSite = () => {
   const [intensity, setIntensity] = useState(50);
-  const [powerOn, setPowerOn] = useState(false);
+  const [powerOn, setPowerOn] = useState(
+    localStorage.getItem("powerOn") === "true" ? true : false
+  );
   const [updatedState, setUpdatedState] = useState(null);
 
   const handleIntensityChange = (event) => {
     setIntensity(event.target.value);
   };
 
-  const toggleLight = () => {
+  const togglePower = () => {
     const endpoint =
       "http://192.168.8.100/api/TpTi4Vomw1kfnwys7trHAe58FnGkqi6UYbVsanYS/lights/48/state";
 
+    const color = powerOn ? [1, 1] : [0.3227, 0.329]; // Hvid farve, når det er slukket, ellers brug den sidste valgte farve
+
     fetch(endpoint, {
       method: "PUT",
-      body: JSON.stringify({ on: !powerOn }),
+      body: JSON.stringify({
+        on: !powerOn,
+        xy: color,
+      }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -28,19 +35,74 @@ const DetailsSite = () => {
         return response.json();
       })
       .then((data) => {
-        console.log("Light state changed successfully:", data);
+        console.log("Power state changed successfully:", data);
         setPowerOn((prev) => !prev);
+        localStorage.setItem("powerOn", !powerOn);
         console.log("Updated state:", powerOn);
         setUpdatedState(powerOn);
       })
       .catch((error) => {
-        console.error("Error changing light state:", error);
+        console.error("Error changing power state:", error);
       });
+  };
+
+  const changeColor = (color) => {
+    const endpoint =
+      "http://192.168.8.100/api/TpTi4Vomw1kfnwys7trHAe58FnGkqi6UYbVsanYS/lights/48/state";
+
+    fetch(endpoint, {
+      method: "PUT",
+      body: JSON.stringify({
+        xy: color,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Color changed successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error changing color:", error);
+      });
+  };
+
+  const handleAddColor = () => {
+    // Implementer logik for at åbne dialog eller inputfelt for at tilføje farver
+    console.log("Implementer funktionen for at tilføje flere farver");
+  };
+
+  const handleSceneClick = (scene) => {
+    switch (scene) {
+      case "Birthday":
+        const pinkColor = [0.4361, 0.2225];
+        const whiteColor = [0.3227, 0.329];
+
+        let currentColor = pinkColor; // Start med lyserød farve
+        setInterval(() => {
+          changeColor(currentColor);
+          currentColor = currentColor === pinkColor ? whiteColor : pinkColor; // Skift mellem lyserød og hvid
+        }, 500);
+        break;
+
+      default:
+        break;
+    }
   };
 
   useEffect(() => {
     setUpdatedState(powerOn);
   }, [powerOn]);
+
+  const handleLightButtonClick = (newIntensity) => {
+    setIntensity(newIntensity);
+  };
 
   return (
     <>
@@ -57,21 +119,36 @@ const DetailsSite = () => {
         </span>
       </div>
       <span className="p-4 pb-8 pt-8 flex gap-4 overflow-x-scroll scrollbar-hidden">
-        <button className="flex-shrink-0 flex justify-around items-center bg-white p-2 rounded-xl text-[#002D67] w-[124px] h-[45px] font-bold text-xs">
+        <button
+          className={`flex-shrink-0 flex justify-around items-center bg-white p-2 rounded-xl text-[#002D67] w-[124px] h-[45px] font-bold text-xs focus:outline-none focus:ring ${
+            intensity === 100 ? "bg-yellow-300" : ""
+          }`}
+          onClick={() => handleLightButtonClick(100)}
+        >
           <img src="src/assets/light.png" alt="" />
           Main light
         </button>
-        <button className="flex-shrink-0 flex justify-around items-center bg-white p-2 rounded-xl text-[#002D67] w-[124px] h-[45px] font-bold text-xs">
+        <button
+          className={`flex-shrink-0 flex justify-around items-center bg-white p-2 rounded-xl text-[#002D67] w-[124px] h-[45px] font-bold text-xs focus:outline-none focus:ring ${
+            intensity === 75 ? "bg-yellow-300" : ""
+          }`}
+          onClick={() => handleLightButtonClick(75)}
+        >
           <img src="src/assets/light.png" alt="" />
           Desk light
         </button>
-        <button className="flex-shrink-0 flex justify-around items-center bg-white p-2 rounded-xl text-[#002D67] w-[124px] h-[45px] font-bold text-xs">
+        <button
+          className={`flex-shrink-0 flex justify-around items-center bg-white p-2 rounded-xl text-[#002D67] w-[124px] h-[45px] font-bold text-xs focus:outline-none focus:ring ${
+            intensity === 25 ? "bg-yellow-300" : ""
+          }`}
+          onClick={() => handleLightButtonClick(25)}
+        >
           <img src="src/assets/light.png" alt="" />
           Bed light
         </button>
       </span>
       <div className="absolute end-10 top-[333px]">
-        <button onClick={toggleLight}>
+        <button onClick={togglePower}>
           <img
             src={powerOn ? "src/assets/poweron.png" : "src/assets/poweroff.png"}
             alt=""
@@ -96,32 +173,50 @@ const DetailsSite = () => {
         <h2 className="text-lg font-bold text-[#002D67] mb-4">Colors</h2>
         <ul className="flex gap-3">
           <li>
-            <button className=" bg-red-400 p-2 rounded-full text-transparent w-8 h-8">
+            <button
+              className=" bg-red-400 p-2 rounded-full text-transparent w-8 h-8"
+              onClick={() => changeColor([0.675, 0.322])}
+            >
               Red
             </button>
           </li>
           <li>
-            <button className=" bg-green-400 p-2 rounded-full text-transparent w-8 h-8">
+            <button
+              className=" bg-green-400 p-2 rounded-full text-transparent w-8 h-8"
+              onClick={() => changeColor([0.41, 0.51721])}
+            >
               Green
             </button>
           </li>
           <li>
-            <button className=" bg-blue-400 p-2 rounded-full text-transparent w-8 h-8">
+            <button
+              className=" bg-blue-400 p-2 rounded-full text-transparent w-8 h-8"
+              onClick={() => changeColor([0.167, 0.04])}
+            >
               Blue
             </button>
           </li>
           <li>
-            <button className=" bg-yellow-400 p-2 rounded-full text-transparent w-8 h-8">
+            <button
+              className=" bg-yellow-400 p-2 rounded-full text-transparent w-8 h-8"
+              onClick={() => changeColor([0.443, 0.5099])}
+            >
               Yellow
             </button>
           </li>
           <li>
-            <button className=" bg-purple-400 p-2 rounded-full text-transparent w-8 h-8">
+            <button
+              className=" bg-purple-400 p-2 rounded-full text-transparent w-8 h-8"
+              onClick={() => changeColor([0.322, 0.168])}
+            >
               Purple
             </button>
           </li>
           <li>
-            <button className="bg-white p-2 rounded-full w-8 h-8 flex justify-center items-center text-center font-semibold">
+            <button
+              className="bg-white p-2 rounded-full w-8 h-8 flex justify-center items-center text-center font-semibold"
+              onClick={handleAddColor}
+            >
               +
             </button>
           </li>
@@ -129,25 +224,37 @@ const DetailsSite = () => {
         <h2 className="text-lg font-bold text-[#002D67] mt-6">Scenes</h2>
         <ul className="mt-4 flex justify-center flex-wrap gap-6">
           <li>
-            <button className="flex justify-evenly items-center bg-[#FF9B9B] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs">
+            <button
+              className="flex justify-evenly items-center bg-[#FF9B9B] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs"
+              onClick={() => handleSceneClick("Birthday")}
+            >
               <img src="src/assets/whitesurface.png" alt="" />
               Birthday
             </button>
           </li>
           <li>
-            <button className="flex justify-evenly items-center bg-[#A693EB] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs">
+            <button
+              className="flex justify-evenly items-center bg-[#A693EB] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs"
+              onClick={() => handleSceneClick("Party")}
+            >
               <img src="src/assets/whitesurface.png" alt="" />
               Party
             </button>
           </li>
           <li>
-            <button className="flex justify-evenly items-center bg-[#93CAEB] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs">
+            <button
+              className="flex justify-evenly items-center bg-[#93CAEB] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs"
+              onClick={() => handleSceneClick("Relax")}
+            >
               <img src="src/assets/whitesurface.png" alt="" />
               Relax
             </button>
           </li>
           <li>
-            <button className="flex justify-evenly items-center bg-[#89DD94] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs">
+            <button
+              className="flex justify-evenly items-center bg-[#89DD94] p-2 rounded-xl text-white w-[150px] h-[55px] font-bold text-xs"
+              onClick={() => handleSceneClick("Fun")}
+            >
               <img src="src/assets/whitesurface.png" alt="" />
               Fun
             </button>
